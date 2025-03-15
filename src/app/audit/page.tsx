@@ -203,7 +203,7 @@ export default function AuditPage() {
                         <Badge
                           variant={
                             log.action.includes("Uploaded") || log.action.includes("Classified")
-                              ? "success"
+                              ? "destructive"
                               : log.action.includes("Viewed")
                                 ? "outline"
                                 : "secondary"

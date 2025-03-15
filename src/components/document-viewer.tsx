@@ -202,7 +202,7 @@ Date: ${document.dateUploaded.toLocaleDateString()}`
                   <Badge
                     variant={
                       documentData.status === "Approved"
-                        ? "success"
+                        ? "secondary"
                         : documentData.status === "Pending"
                           ? "outline"
                           : "destructive"

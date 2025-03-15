@@ -185,7 +185,7 @@ export default function DocumentsPage() {
                         <Badge
                           variant={
                             document.status === "Approved"
-                              ? "success"
+                              ? "secondary"
                               : document.status === "Pending"
                                 ? "outline"
                                 : "destructive"

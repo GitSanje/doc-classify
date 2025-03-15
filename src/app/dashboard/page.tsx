@@ -164,7 +164,7 @@ export default function DashboardPage() {
                       <Badge
                         variant={
                           document.status === "Approved"
-                            ? "success"
+                            ? "secondary"
                             : document.status === "Pending"
                               ? "outline"
                               : "destructive"
