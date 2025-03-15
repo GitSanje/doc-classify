@@ -86,7 +86,7 @@ export const saveContentDB = async (formData: FormData) => {
                 filename,
                 metadata: extractedData,
                 type: extractedData.document_type,
-                docUrl: docUrl ?? 'none',
+                docUrl: docUrl ,
                 custId: existingCustomer.id,
               },
             });
@@ -105,7 +105,7 @@ export const saveContentDB = async (formData: FormData) => {
                       filename:filename,
                       metadata: extractedData,
                       type: extractedData.document_type,
-                      docUrl: docUrl ?? 'none',
+                      docUrl: docUrl,
                     },
                   ],
                 },
@@ -138,15 +138,15 @@ export const extractInfoImg = async (formData: FormData) => {
           return { success: false, message: "no image found" };
         }
 
-       const imgPath =  path.join(process.cwd(),`/public/${img.name}`)
+      //  const imgPath =  path.join(process.cwd(),`/public/${img.name}`)
 
-       const buffer = Buffer.from(bytes);
+      //  const buffer = Buffer.from(bytes);
       //  if (await fileExists(imgPath)) {
         
       //   return { success: true, message: "already extracted!" };
       // } else {
       
-        fs.writeFile(imgPath, buffer);
+        // fs.writeFile(imgPath, buffer);
       // }
     
         // const uploadResponse = await fetch(
@@ -163,7 +163,6 @@ export const extractInfoImg = async (formData: FormData) => {
         
         const jsonData = {
             imginfo:{ 
-                // docUrl: uploadedImageData.url,
                filename: img.name
             },
             airesult:extractJSON(airesult.response.text() )

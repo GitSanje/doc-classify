@@ -451,7 +451,7 @@ export function DocumentPreview({ file, url }: { file?: File, url?:string }) {
               className="relative h-full w-full flex flex-grow items-center justify-center overflow-hidden"
             >
               <img
-                src={url ? "/"+ url : URL.createObjectURL(file!) || "/placeholder.svg"}
+                src={url ?  url : URL.createObjectURL(file!) || "/placeholder.svg"}
                 alt={file?.name}
                 className="max-h-full max-w-full object-contain transition-transform duration-200"
                 style={{

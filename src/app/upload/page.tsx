@@ -40,6 +40,9 @@ import { Input } from "@/components/ui/input";
 import { Eye } from "lucide-react";
 import { toast } from "sonner";
 import RenderJson from "@/components/helpers/renderJson";
+import AvatarUploadPage from "@/components/vercel-upload";
+import { upload } from "@vercel/blob/client";
+import { PutBlobResult } from "@vercel/blob";
 
 type FileStatus = "idle" | "uploading" | "success" | "error";
 
@@ -68,12 +71,7 @@ export default function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
-  // const [expandedSections, setExpandedSections] = useState<
-  //   Record<string, Set<string>>
-  // >({});
-  // const [editableFields, setEditableFields] = useState<
-  //   Record<string, Set<string>>
-  // >({});
+  const [blob, setBlob] = useState<PutBlobResult | null>(null);
 
 
   const [isPending, startTransition] = useTransition();
@@ -117,6 +115,13 @@ export default function UploadPage() {
           process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME!
         );
 
+        const newBlob = await upload(file.name, file.file!, {
+          access: 'public',
+          handleUploadUrl: '/api/avatar/upload',
+        });
+        setBlob(newBlob)
+
+
         //Extract info from image
         const res = await extractInfoImg(formData);
 
@@ -124,6 +129,7 @@ export default function UploadPage() {
         const metadata = {
           documentType: res?.data?.airesult?.document_type || "Unknown",
           ownerName: res?.data?.airesult.name || "",
+          
           documentId: `DOC-${Math.floor(Math.random() * 1000000)}`,
         };
 
@@ -134,7 +140,7 @@ export default function UploadPage() {
               ? {
                   ...f,
                   status: "success",
-                  // docUrl: res?.data?.imginfo.docUrl,
+                  docUrl: newBlob?.url,
                   metadata,
                   extractedData: res?.data?.airesult || {},
                   editedData: JSON.parse(
@@ -227,6 +233,7 @@ export default function UploadPage() {
         </div>
       </div>
 
+     
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>

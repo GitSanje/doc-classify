@@ -54,44 +54,6 @@ export function DocumentViewer({ document }: any) {
   
 
 
-  // Sample extracted text based on document type
-//   const getExtractedText = () => {
-//     switch (document.type) {
-//       case "Passport":
-//         return `PASSPORT
-// Type: P
-// Code: USA
-// Passport No: 123456789
-// Surname: ${document.owner.split(" ")[1]}
-// Given Names: ${document.owner.split(" ")[0]}
-// Nationality: UNITED STATES OF AMERICA
-// Date of Birth: 15 JAN 1985
-// Place of Birth: NEW YORK, USA
-// Date of Issue: 10 JUN 2020
-// Date of Expiry: 09 JUN 2030
-// Authority: UNITED STATES DEPARTMENT OF STATE`
-//       case "Driver's License":
-//         return `DRIVER LICENSE
-// DL No: D1234567
-// Class: C
-// Endorsements: NONE
-// Restrictions: NONE
-// Name: ${document.owner}
-// Address: 123 MAIN ST, ANYTOWN, USA 12345
-// DOB: 22 FEB 1990
-// Sex: F
-// Height: 5'-6"
-// Eyes: BRN
-// Issue Date: 22 JUN 2022
-// Exp Date: 22 FEB 2026`
-//       default:
-//         return `Document Type: ${document.type}
-// Document ID: ${document.id}
-// Owner: ${document.owner}
-// Date: ${document.dateUploaded.toLocaleDateString()}`
-//     }
-//   }
-
   const handleSave = () => {
     setIsEditing(false)
     toast({
@@ -142,7 +104,7 @@ export function DocumentViewer({ document }: any) {
               height={600}
               className="h-full w-full object-contain"
             /> */}
-            <DocumentPreview url={document.filename} />
+            <DocumentPreview url={document.docUrl} />
           </div>
         </TabsContent>
         <TabsContent value="extracted" className="mt-4">
