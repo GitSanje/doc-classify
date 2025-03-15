@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  documents          Document[]
+  PasswordResetToken PasswordResetToken?
+
+  accounts      Account[]
+  sessions      Session[]
+
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+
+
+
+
+// Role enum for role-based access control
+enum Role {
+  ADMIN
+  USER
+}
+
+// Password reset token for forgot password functionality
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+
+
+model Document {
+  id         String   @id @default(uuid())
+  filename   String
+  metadata   Json
+  type       String
+  docUrl     String
+  custId     String
+  customer   Customer @relation(fields: [custId], references: [id])
+  uploadedAt DateTime @default(now())
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     String?
+}
+
+model Customer {
+  id         String     @id @default(uuid())
+  name       String
+  phone      String?
+  location   String?
+  DateJoined DateTime?
+  uploadedAt DateTime   @default(now())
+  Document   Document[]
+}
