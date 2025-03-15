@@ -12,6 +12,10 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
+import { UploadedFile } from "@/app/upload/page"
+import RenderJson from "./helpers/renderJson"
+import { metadata } from "@/app/layout"
+import { DocumentPreview } from "./document-preview"
 
 interface DocumentViewerProps {
   document: {
@@ -25,52 +29,68 @@ interface DocumentViewerProps {
   }
 }
 
-export function DocumentViewer({ document }: DocumentViewerProps) {
+export function DocumentViewer({ document }: any) {
   const { toast } = useToast()
   const [isEditing, setIsEditing] = useState(false)
   const [documentData, setDocumentData] = useState({
     type: document.type,
-    owner: document.owner,
-    status: document.status,
+    owner: document.metadata.name,
+    // status: document.status,
   })
+  
+  const [files, setFiles] = useState<UploadedFile[]>(() => [
+    {
+      id: document.id,
+      name: document.filename,
+      type: document.type,
+      status: "success",
+      extractedData: document.metadata,
+      editedData: document.metadata,
+      metadata: {
+        documentType: document.type,
+      },
+    },
+  ]);
+  
+
 
   // Sample extracted text based on document type
-  const getExtractedText = () => {
-    switch (document.type) {
-      case "Passport":
-        return `PASSPORT
-Type: P
-Code: USA
-Passport No: 123456789
-Surname: ${document.owner.split(" ")[1]}
-Given Names: ${document.owner.split(" ")[0]}
-Nationality: UNITED STATES OF AMERICA
-Date of Birth: 15 JAN 1985
-Place of Birth: NEW YORK, USA
-Date of Issue: 10 JUN 2020
-Date of Expiry: 09 JUN 2030
-Authority: UNITED STATES DEPARTMENT OF STATE`
-      case "Driver's License":
-        return `DRIVER LICENSE
-DL No: D1234567
-Class: C
-Endorsements: NONE
-Restrictions: NONE
-Name: ${document.owner}
-Address: 123 MAIN ST, ANYTOWN, USA 12345
-DOB: 22 FEB 1990
-Sex: F
-Height: 5'-6"
-Eyes: BRN
-Issue Date: 22 JUN 2022
-Exp Date: 22 FEB 2026`
-      default:
-        return `Document Type: ${document.type}
-Document ID: ${document.id}
-Owner: ${document.owner}
-Date: ${document.dateUploaded.toLocaleDateString()}`
-    }
-  }
+//   const getExtractedText = () => {
+//     switch (document.type) {
+//       case "Passport":
+//         return `PASSPORT
+// Type: P
+// Code: USA
+// Passport No: 123456789
+// Surname: ${document.owner.split(" ")[1]}
+// Given Names: ${document.owner.split(" ")[0]}
+// Nationality: UNITED STATES OF AMERICA
+// Date of Birth: 15 JAN 1985
+// Place of Birth: NEW YORK, USA
+// Date of Issue: 10 JUN 2020
+// Date of Expiry: 09 JUN 2030
+// Authority: UNITED STATES DEPARTMENT OF STATE`
+//       case "Driver's License":
+//         return `DRIVER LICENSE
+// DL No: D1234567
+// Class: C
+// Endorsements: NONE
+// Restrictions: NONE
+// Name: ${document.owner}
+// Address: 123 MAIN ST, ANYTOWN, USA 12345
+// DOB: 22 FEB 1990
+// Sex: F
+// Height: 5'-6"
+// Eyes: BRN
+// Issue Date: 22 JUN 2022
+// Exp Date: 22 FEB 2026`
+//       default:
+//         return `Document Type: ${document.type}
+// Document ID: ${document.id}
+// Owner: ${document.owner}
+// Date: ${document.dateUploaded.toLocaleDateString()}`
+//     }
+//   }
 
   const handleSave = () => {
     setIsEditing(false)
@@ -79,6 +99,8 @@ Date: ${document.dateUploaded.toLocaleDateString()}`
       description: "Document classification has been updated",
     })
   }
+
+
 
   return (
     <div className="space-y-4">
@@ -113,13 +135,14 @@ Date: ${document.dateUploaded.toLocaleDateString()}`
         </TabsList>
         <TabsContent value="document" className="mt-4">
           <div className="aspect-[4/3] w-full overflow-hidden rounded-lg border">
-            <Image
-              src={document.preview || "/placeholder.svg"}
+            {/* <Image
+              src={"/"+document.filename || "/placeholder.svg"}
               alt={document.name}
               width={800}
               height={600}
               className="h-full w-full object-contain"
-            />
+            /> */}
+            <DocumentPreview url={document.filename} />
           </div>
         </TabsContent>
         <TabsContent value="extracted" className="mt-4">
@@ -128,7 +151,10 @@ Date: ${document.dateUploaded.toLocaleDateString()}`
               <CardTitle className="text-sm font-medium">Extracted Text</CardTitle>
             </CardHeader>
             <CardContent>
-              <pre className="whitespace-pre-wrap rounded-md bg-muted p-4 text-sm font-mono">{getExtractedText()}</pre>
+              {/* <pre className="whitespace-pre-wrap rounded-md bg-muted p-4 text-sm font-mono">{}</pre>
+              
+              */}
+              <RenderJson fileID={document.id} Data={document.metadata} setFiles={setFiles}/>
             </CardContent>
           </Card>
         </TabsContent>
@@ -184,33 +210,35 @@ Date: ${document.dateUploaded.toLocaleDateString()}`
             <div className="space-y-1.5">
               <Label htmlFor="documentStatus">Status</Label>
               {isEditing ? (
-                <Select
-                  value={documentData.status}
-                  onValueChange={(value) => setDocumentData({ ...documentData, status: value })}
-                >
-                  <SelectTrigger id="documentStatus">
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Approved">Approved</SelectItem>
-                    <SelectItem value="Pending">Pending</SelectItem>
-                    <SelectItem value="Rejected">Rejected</SelectItem>
-                  </SelectContent>
-                </Select>
+                // <Select
+                //   value={documentData.status}
+                //   onValueChange={(value) => setDocumentData({ ...documentData, status: value })}
+                // >
+                //   <SelectTrigger id="documentStatus">
+                //     <SelectValue placeholder="Select status" />
+                //   </SelectTrigger>
+                //   <SelectContent>
+                //     <SelectItem value="Approved">Approved</SelectItem>
+                //     <SelectItem value="Pending">Pending</SelectItem>
+                //     <SelectItem value="Rejected">Rejected</SelectItem>
+                //   </SelectContent>
+                // </Select>
+                ''
               ) : (
-                <div className="rounded-md border px-3 py-2 text-sm">
-                  <Badge
-                    variant={
-                      documentData.status === "Approved"
-                        ? "secondary"
-                        : documentData.status === "Pending"
-                          ? "outline"
-                          : "destructive"
-                    }
-                  >
-                    {documentData.status}
-                  </Badge>
-                </div>
+                // <div className="rounded-md border px-3 py-2 text-sm">
+                //   <Badge
+                //     variant={
+                //       documentData.status === "Approved"
+                //         ? "secondary"
+                //         : documentData.status === "Pending"
+                //           ? "outline"
+                //           : "destructive"
+                //     }
+                //   >
+                //     {documentData.status}
+                //   </Badge>
+                // </div>
+                ''
               )}
             </div>
           </div>

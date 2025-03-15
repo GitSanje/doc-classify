@@ -3,15 +3,29 @@
 "use server"
 
 
+
+
 import { prisma } from "@/lib/db";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
+import path from "path";
+import fs from "fs/promises"
 
 function extractJSON(text: string) {
     const regex = /{[\s\S]*}/;
     const match = text.match(regex);
     return match ? JSON.parse(match[0]) : null;
 }
+
+export const fileExists = async (pathToFileOrDir: string): Promise<boolean> => {
+  try {
+    pathToFileOrDir = path.join(process.cwd(), pathToFileOrDir);
+    await fs.stat(pathToFileOrDir);
+    return true; // File or directory exists
+  } catch (error) {
+    return false; // File or directory does not exist
+  }
+};
+
 
 
 const { GEMINI_API_KEY, CLOUDINARY_CLOUD_NAME } = process.env;
@@ -40,7 +54,7 @@ const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash-001' })
     ]);
 
    
-console.log(extractJSON(result.response.text() ));
+    console.log(extractJSON(result.response.text()));
 
    return result
 
@@ -54,9 +68,6 @@ export const saveContentDB = async (formData: FormData) => {
       const docUrl = formData.get("docUrl") as string;
 
       
-     
-     
-
         // Find existing customer
         const existingCustomer = await prisma.customer.findFirst({
           where: { name: extractedData.name ?? "none" },
@@ -114,6 +125,9 @@ export const saveContentDB = async (formData: FormData) => {
   
 
 export const extractInfoImg = async (formData: FormData) => {
+  
+  console.log(process.env.GEMINI_API_KEY);
+  
     try {
       
         const img = formData.get("file") as File;
@@ -123,6 +137,17 @@ export const extractInfoImg = async (formData: FormData) => {
         if (!img) {
           return { success: false, message: "no image found" };
         }
+
+       const imgPath =  path.join(process.cwd(),`/public/${img.name}`)
+
+       const buffer = Buffer.from(bytes);
+      //  if (await fileExists(imgPath)) {
+        
+      //   return { success: true, message: "already extracted!" };
+      // } else {
+      
+        fs.writeFile(imgPath, buffer);
+      // }
     
         // const uploadResponse = await fetch(
         //   `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`,
@@ -152,6 +177,8 @@ export const extractInfoImg = async (formData: FormData) => {
           data:jsonData
         };
       } catch (error) {
+        console.log(error);
+        
         return { message: "Error", status: 500 };
       }
 

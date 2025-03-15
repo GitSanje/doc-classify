@@ -367,7 +367,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Slider } from "./ui/slider";
 
-export function DocumentPreview({ file }: { file: File }) {
+export function DocumentPreview({ file, url }: { file?: File, url?:string }) {
   const [rotation, setRotation] = useState(0);
   const [flipH, setFlipH] = useState(false);
   const [flipV, setFlipV] = useState(false);
@@ -383,7 +383,7 @@ export function DocumentPreview({ file }: { file: File }) {
     setFlipV(false);
     setZoom(100);
     setPosition({ x: 0, y: 0 });
-  }, [file.name]);
+  }, [file?.name, url]);
 
   const rotateClockwise = () => {
     setRotation((prev) => (prev + 90) % 360);
@@ -444,15 +444,15 @@ export function DocumentPreview({ file }: { file: File }) {
   return (
     <div className="space-y-4">
       <div className="aspect-[4/3] w-full rounded-lg border relative">
-        {file ? (
+        {file || url ? (
           <div className="h-full w-full flex gap-2 flex-col items-center">
             <div
               // ref={imageContainerRef}
               className="relative h-full w-full flex flex-grow items-center justify-center overflow-hidden"
             >
               <img
-                src={URL.createObjectURL(file) || "/placeholder.svg"}
-                alt={file.name}
+                src={url ? "/"+ url : URL.createObjectURL(file!) || "/placeholder.svg"}
+                alt={file?.name}
                 className="max-h-full max-w-full object-contain transition-transform duration-200"
                 style={{
                   transform: getTransformStyle(),
