@@ -58,13 +58,7 @@ const recentActivity = [
     timestamp: new Date("2023-07-15T10:30:00"),
     user: "jane.smith@example.com",
   },
-  {
-    id: "ACT-789012",
-    action: "Document Classified",
-    documentName: "Driver's License - Jane Smith",
-    timestamp: new Date("2023-07-14T11:45:00"),
-    user: "john.doe@example.com",
-  },
+  
   {
     id: "ACT-345678",
     action: "Document Downloaded",
@@ -105,12 +99,12 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Classification</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Documents types</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">35</div>
-            <p className="text-xs text-muted-foreground">14% of total documents</p>
+            <div className="text-2xl font-bold">5</div>
+            <p className="text-xs text-muted-foreground"></p>
           </CardContent>
         </Card>
         <Card>
@@ -123,18 +117,18 @@ export default function DashboardPage() {
             <p className="text-xs text-muted-foreground">+5 from yesterday</p>
           </CardContent>
         </Card>
-        <Card>
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Classification Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Documents Type</CardTitle>
             <BarChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">84%</div>
+            <div className="text-2xl font-bold">5</div>
             <div className="mt-2 h-2 w-full rounded-full bg-muted">
               <div className="h-2 rounded-full bg-primary" style={{ width: "84%" }} />
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -215,9 +209,7 @@ export default function DashboardPage() {
                   <div className="rounded-full bg-primary/10 p-2">
                     {activity.action.includes("Uploaded") ? (
                       <Upload className="h-4 w-4 text-primary" />
-                    ) : activity.action.includes("Classified") ? (
-                      <FileText className="h-4 w-4 text-primary" />
-                    ) : (
+                    )  : (
                       <FolderOpen className="h-4 w-4 text-primary" />
                     )}
                   </div>

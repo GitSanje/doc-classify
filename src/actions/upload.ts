@@ -9,6 +9,7 @@ import { prisma } from "@/lib/db";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import path from "path";
 import fs from "fs/promises"
+import { revalidatePath } from "next/cache";
 
 function extractJSON(text: string) {
     const regex = /{[\s\S]*}/;
@@ -54,24 +55,40 @@ const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash-001' })
     ]);
 
    
-    console.log(extractJSON(result.response.text()));
+
 
    return result
 
 }
 
+const getLocationValue = (location: unknown) => {
+  if (typeof location === "string") {
+    return location;
+  } else if (Array.isArray(location) && location.length > 0) {
+    return location[0]; // Get first element if it's an array
+  } else if (typeof location === "object" && location !== null) {
+    return Object.values(location)[0]; // Get first value if it's an object
+  }
+  return "Unknown"; // Default fallback if none of the conditions match
+};
+
 
 export const saveContentDB = async (formData: FormData) => {
+  console.log(formData);
     try {
       const extractedData = JSON.parse(formData.get("extractedData") as string);
       const filename = formData.get("filename") as string;
       const docUrl = formData.get("docUrl") as string;
 
       
+        
         // Find existing customer
         const existingCustomer = await prisma.customer.findFirst({
-          where: { name: extractedData.name ?? "none" },
+          where: { name: extractedData.name  },
         });
+
+        console.log(existingCustomer,'custexist');
+        
   
         if (existingCustomer) {
           // Check if document already exists for the customer
@@ -92,13 +109,15 @@ export const saveContentDB = async (formData: FormData) => {
             });
           }
         } else {
+
+          
           // Create a new customer and associated document atomically
           await prisma.$transaction([
             prisma.customer.create({
               data: {
                 name: extractedData.name ?? 'none',
                 phone: extractedData.phone_number ?? 'none',
-                location: extractedData.location ?? 'none',
+                location: getLocationValue(extractedData.location) ?? 'none',
                 Document: {
                   create: [
                     {
@@ -113,6 +132,8 @@ export const saveContentDB = async (formData: FormData) => {
             }),
           ]);
         }
+
+        revalidatePath('/documents')
   
         return { success: true, status: 200 };
       

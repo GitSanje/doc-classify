@@ -12,10 +12,11 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
-import { UploadedFile } from "@/app/upload/page"
+
 import RenderJson from "./helpers/renderJson"
 import { metadata } from "@/app/layout"
 import { DocumentPreview } from "./document-preview"
+import { UploadedFile } from "./upload"
 
 interface DocumentViewerProps {
   document: {
@@ -116,7 +117,7 @@ export function DocumentViewer({ document }: any) {
               {/* <pre className="whitespace-pre-wrap rounded-md bg-muted p-4 text-sm font-mono">{}</pre>
               
               */}
-              <RenderJson fileID={document.id} Data={document.metadata} setFiles={setFiles}/>
+              <RenderJson fileID={document.id} Data={files[0].editedData} setFiles={setFiles} />
             </CardContent>
           </Card>
         </TabsContent>

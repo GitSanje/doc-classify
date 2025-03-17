@@ -1,10 +1,11 @@
 
 "use server"
 
+import { cache } from "@/lib/cache";
 import { prisma } from "@/lib/db"
 
 
-export const getDocs = async () => {
+export const getDocs = cache (async () => {
     try {
         const [docs, customers] = await Promise.all([
             prisma.document.findMany(),
@@ -16,4 +17,9 @@ export const getDocs = async () => {
         console.error("Error fetching data:", error);
         return { docs: [], customers: [] };
     }
-}
+},
+["getDocs"],
+
+{ revalidate: 30 *30 , tags:['getDocs']}
+
+)

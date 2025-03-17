@@ -38,12 +38,15 @@ export function AppSidebar() {
 
   return (
     <Sidebar className="">
+      
       <SidebarHeader className="flex items-center justify-between ">
+      
         <div className="flex items-center gap-2 px-2">
           <FolderOpen className="h-6 w-6" />
           <h1 className="text-lg font-bold">DocClassify</h1>
         </div>
-        <SidebarTrigger />
+        <SidebarTrigger className=""/>
+        
       </SidebarHeader>
       <SidebarSeparator />
       <SidebarContent>
@@ -75,14 +78,14 @@ export function AppSidebar() {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              <SidebarMenuItem>
+              {/* <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={isActive("/search")}>
                   <Link href="/search">
                     <Search className="h-4 w-4" />
                     <span>Search Documents</span>
                   </Link>
                 </SidebarMenuButton>
-              </SidebarMenuItem>
+              </SidebarMenuItem> */}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
